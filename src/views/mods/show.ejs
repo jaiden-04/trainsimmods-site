@@ -1,0 +1,14 @@
+<div class="container">
+  <h1><%= mod.title %></h1>
+  <div class="mod-details">
+    <p><%= mod.description || 'No description' %></p>
+    <div class="mod-info">
+      <p>Version: <%= mod.version || 'N/A' %></p>
+      <p>Downloads: <%= mod.downloadCount %></p>
+      <p>Uploaded: <%= new Date(mod.createdAt).toLocaleDateString() %></p>
+    </div>
+    <% if (mod.filePath) { %>
+      <a href="/mods/<%= mod.slug %>/download" class="download-button">Download</a>
+    <% } %>
+  </div>
+</div>

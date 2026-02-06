@@ -1,0 +1,11 @@
+<div class="container">
+  <h1>Categories</h1>
+  <div class="categories-list">
+    <% categories.forEach(category => { %>
+      <div class="category-card">
+        <h3><a href="/category/<%= category.slug %>"><%= category.name %></a></h3>
+        <p><%= category.description || 'No description' %></p>
+      </div>
+    <% }); %>
+  </div>
+</div>

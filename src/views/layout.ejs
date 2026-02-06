@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TSW Mods</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="nav-container">
+        <a href="/" class="logo">
+          <span>TrainSimMods</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="/mods">Browse</a></li>
+          <li><a href="/categories">Categories</a></li>
+          <% if (user) { %>
+            <li><a href="/mods/upload" class="upload-btn">Upload Mod</a></li>
+            <li><span class="user-name"><%= user.displayName || user.username %></span></li>
+            <li>
+              <form action="/logout" method="POST">
+                <button type="submit" class="logout-btn">Logout</button>
+              </form>
+            </li>
+          <% } else { %>
+            <li><a href="/login" class="login-link">Login</a></li>
+            <li><a href="/register" class="register-btn">Sign Up</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <%- body %>
+  </main>
+  <footer>
+    <div class="footer-container">
+      <p>&copy; 2026 TSW Mods Community</p>
+    </div>
+  </footer>
+</body>
+</html>

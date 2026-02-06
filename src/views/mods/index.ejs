@@ -1,0 +1,21 @@
+<div class="container">
+  <h1>All Mods</h1>
+  <div class="categories-filter">
+    <a href="/mods">All</a>
+    <% categories.forEach(category => { %>
+      <a href="/category/<%= category.slug %>"><%= category.name %></a>
+    <% }); %>
+  </div>
+  <div class="mods-grid">
+    <% mods.forEach(mod => { %>
+      <div class="mod-card">
+        <h3><a href="/mods/<%= mod.slug %>"><%= mod.title %></a></h3>
+        <p><%= mod.description || 'No description' %></p>
+        <div class="mod-meta">
+          <span>Version: <%= mod.version || 'N/A' %></span>
+          <span>Downloads: <%= mod.downloadCount %></span>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+</div>
