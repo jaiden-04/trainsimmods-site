@@ -14,6 +14,6 @@ router.get('/', (request: Request, response: Response) => {
 router.use('/', authRoutes);
 router.use('/mods', modRoutes);
 router.use('/categories', categoryRoutes);
-router.use('/category', modController.showModsByCategory);
+router.get('/category/:slug', modController.showModsByCategory.bind(modController));
 
 export default router;
