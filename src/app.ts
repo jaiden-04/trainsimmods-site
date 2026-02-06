@@ -7,6 +7,7 @@ import routes from './routes';
 import { errorHandler } from './middleware/errorHandler';
 import path from 'path';
 import passport from 'passport';
+import { setLocals } from './middleware/locals';
 import './config/passport';
 
 const app = express();
@@ -41,6 +42,9 @@ app.use(
 
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(setLocals);
+
+app.use(routes);
 
 app.use(routes);
 
