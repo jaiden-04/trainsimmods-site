@@ -3,32 +3,180 @@
   <% if (error) { %>
     <div class="error"><%= error %></div>
   <% } %>
-  <form action="/mods/upload" method="POST" enctype="multipart/form-data">
+  <form id="uploadForm" action="/mods/upload" method="POST" enctype="multipart/form-data">
     <div class="form-group">
-      <label for="title">Title</label>
-      <input type="text" id="title" name="title" required>
+      <label for="title">Title *</label>
+      <input type="text" id="title" name="title" placeholder="Enter mod title" required>
     </div>
+    
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea id="description" name="description" rows="5"></textarea>
+      <textarea id="description" name="description" rows="5" placeholder="Describe your mod"></textarea>
     </div>
+    
     <div class="form-group">
       <label for="categoryId">Category</label>
       <select id="categoryId" name="categoryId">
-        <option value="">None</option>
+        <option value="">Select a category</option>
         <% categories.forEach(category => { %>
           <option value="<%= category.id %>"><%= category.name %></option>
         <% }); %>
       </select>
     </div>
+    
     <div class="form-group">
       <label for="version">Version</label>
-      <input type="text" id="version" name="version">
+      <input type="text" id="version" name="version" placeholder="1.0.0">
     </div>
-    <div class="form-group">
-      <label for="file">File (.zip, .rar, .7z, .pak - max 500MB)</label>
-      <input type="file" id="file" name="file" required>
+    
+    <h2 style="margin-top: 30px; margin-bottom: 15px; font-size: 18px; color: #fff; border-top: 1px solid #2a2a2a; padding-top: 20px;">Upload Files</h2>
+    
+    <div id="filesList">
+      <div class="file-upload-item">
+        <div class="form-group">
+          <label for="fileName0">File Name *</label>
+          <input type="text" id="fileName0" name="fileNames[]" placeholder="e.g., 1.0.0" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="fileGameVersion0">Game Version</label>
+          <select id="fileGameVersion0" name="fileGameVersions[]">
+            <option value="">Any/All versions</option>
+            <option value="Train Sim World 5">Train Sim World 5</option>
+            <option value="Train Sim World 4">Train Sim World 4</option>
+            <option value="Train Sim World 3">Train Sim World 3</option>
+            <option value="Train Sim World 2">Train Sim World 2</option>
+            <option value="Train Sim World">Train Sim World</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="file0">File * (.zip, .rar, .7z, .pak - max 500MB)</label>
+          <input type="file" id="file0" name="files[]" accept=".zip,.rar,.7z,.pak" required>
+        </div>
+      </div>
     </div>
-    <button type="submit">Upload</button>
+    
+    <button type="button" id="addFileBtn" class="add-file-btn">+ Add Another File</button>
+    
+    <div id="fileSizeError" class="error" style="display: none; margin-top: 10px;"></div>
+    
+    <div id="uploadProgress" style="display: none;">
+      <div class="progress-bar">
+        <div id="progressFill" class="progress-fill"></div>
+      </div>
+      <p id="progressText" style="text-align: center; margin-top: 8px; color: #b0b0b0; font-size: 14px;">Uploading...</p>
+    </div>
+    
+    <button type="submit" id="submitBtn">Upload Mod</button>
   </form>
 </div>
+
+<script>
+let fileCount = 1;
+const maxFileSize = 500 * 1024 * 1024;
+
+document.getElementById('addFileBtn').addEventListener('click', function() {
+  const filesList = document.getElementById('filesList');
+  const newFile = document.createElement('div');
+  newFile.className = 'file-upload-item';
+  newFile.innerHTML = `
+    <div class="form-group">
+      <label for="fileName${fileCount}">File Name *</label>
+      <input type="text" id="fileName${fileCount}" name="fileNames[]" placeholder="e.g., 1.0.0" required>
+    </div>
+    
+    <div class="form-group">
+      <label for="fileGameVersion${fileCount}">Game Version</label>
+      <select id="fileGameVersion${fileCount}" name="fileGameVersions[]">
+        <option value="">Any/All versions</option>
+        <option value="Train Sim World 5">Train Sim World 5</option>
+        <option value="Train Sim World 4">Train Sim World 4</option>
+        <option value="Train Sim World 3">Train Sim World 3</option>
+        <option value="Train Sim World 2">Train Sim World 2</option>
+        <option value="Train Sim World">Train Sim World</option>
+      </select>
+    </div>
+    
+    <div class="form-group">
+      <label for="file${fileCount}">File * (.zip, .rar, .7z, .pak - max 500MB)</label>
+      <input type="file" id="file${fileCount}" name="files[]" accept=".zip,.rar,.7z,.pak" required>
+    </div>
+    
+    <button type="button" class="remove-file-btn" onclick="this.parentElement.remove()">Remove</button>
+  `;
+  filesList.appendChild(newFile);
+  fileCount++;
+});
+
+const form = document.getElementById('uploadForm');
+const submitBtn = document.getElementById('submitBtn');
+const uploadProgress = document.getElementById('uploadProgress');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+const fileSizeError = document.getElementById('fileSizeError');
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const fileInputs = document.querySelectorAll('input[type="file"]');
+  for (let input of fileInputs) {
+    if (input.files[0] && input.files[0].size > maxFileSize) {
+      fileSizeError.textContent = `File "${input.files[0].name}" is too large (${(input.files[0].size / 1024 / 1024).toFixed(2)} MB). Maximum size is 500 MB.`;
+      fileSizeError.style.display = 'block';
+      return;
+    }
+  }
+  
+  const formData = new FormData(form);
+  const xhr = new XMLHttpRequest();
+  
+  uploadProgress.style.display = 'block';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading...';
+  fileSizeError.style.display = 'none';
+  
+  xhr.upload.addEventListener('progress', function(e) {
+    if (e.lengthComputable) {
+      const percentComplete = (e.loaded / e.total) * 100;
+      progressFill.style.width = percentComplete + '%';
+      progressText.textContent = `Uploading: ${percentComplete.toFixed(0)}%`;
+    }
+  });
+  
+  xhr.addEventListener('load', function() {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      if (response.redirect) {
+        window.location.href = response.redirect;
+      }
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      fileSizeError.textContent = response.error || 'Upload failed';
+      fileSizeError.style.display = 'block';
+      uploadProgress.style.display = 'none';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Upload Mod';
+    }
+  });
+  
+  xhr.addEventListener('error', function() {
+    fileSizeError.textContent = 'Upload failed. Please try again.';
+    fileSizeError.style.display = 'block';
+    uploadProgress.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Upload Mod';
+  });
+  
+  xhr.addEventListener('abort', function() {
+    fileSizeError.textContent = 'Upload cancelled.';
+    fileSizeError.style.display = 'block';
+    uploadProgress.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Upload Mod';
+  });
+  
+  xhr.open('POST', '/mods/upload', true);
+  xhr.send(formData);
+});
+</script>

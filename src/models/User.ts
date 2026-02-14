@@ -5,6 +5,7 @@ export interface User {
   passwordHash: string | null;
   steamId: string | null;
   displayName: string | null;
+  isAdmin: boolean;
   createdAt: Date;
   updatedAt: Date;
 }

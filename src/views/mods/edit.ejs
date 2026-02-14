@@ -1,0 +1,184 @@
+<div class="container">
+  <h1>Edit Mod</h1>
+  
+  <div class="mod-info">
+    <p><a href="/mods/<%= mod.slug %>">&larr; Back to mod</a></p>
+  </div>
+
+  <% if (error) { %>
+    <div class="error"><%= error %></div>
+  <% } %>
+
+  <div class="edit-mod-form">
+    <h2>Mod Information</h2>
+    <form action="/mods/<%= mod.slug %>/edit" method="POST">
+      <div class="form-group">
+        <label for="title">Title *</label>
+        <input type="text" id="title" name="title" value="<%= mod.title %>" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5"><%= mod.description || '' %></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label for="categoryId">Category</label>
+        <select id="categoryId" name="categoryId">
+          <option value="">No category</option>
+          <% categories.forEach(category => { %>
+            <option value="<%= category.id %>" <%= mod.categoryId === category.id ? 'selected' : '' %>><%= category.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="version">Version</label>
+        <input type="text" id="version" name="version" value="<%= mod.version || '' %>" placeholder="1.0.0">
+      </div>
+      
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+
+  <div class="versions-list">
+    <h2>Manage Files</h2>
+    <% if (versions.length === 0) { %>
+      <p style="color: #909090;">No files uploaded yet.</p>
+    <% } else { %>
+      <% versions.forEach(version => { %>
+        <div class="version-manage-item">
+          <div class="version-info">
+            <strong><%= version.versionName %></strong>
+            <% if (version.gameVersion) { %>
+              <span class="game-version">for <%= version.gameVersion %></span>
+            <% } %>
+            <span class="version-meta"><%= (version.fileSize / 1024 / 1024).toFixed(2) %> MB • <%= version.downloadCount %> downloads</span>
+          </div>
+          <form action="/mods/<%= mod.slug %>/versions/<%= version.id %>/delete" method="POST" style="display: inline;">
+            <button type="submit" class="delete-btn" onclick="return confirm('Delete this file?')">Delete</button>
+          </form>
+        </div>
+      <% }); %>
+    <% } %>
+  </div>
+
+  <div class="upload-version-form">
+    <h2>Upload New File</h2>
+    <form id="versionForm" action="/mods/<%= mod.slug %>/versions/upload" method="POST" enctype="multipart/form-data">
+      <div class="form-group">
+        <label for="versionName">File Name *</label>
+        <input type="text" id="versionName" name="versionName" placeholder="e.g., 1.0.0" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="gameVersion">Game Version</label>
+        <select id="gameVersion" name="gameVersion">
+          <option value="">Any/All versions</option>
+          <option value="Train Sim World 5">Train Sim World 5</option>
+          <option value="Train Sim World 4">Train Sim World 4</option>
+          <option value="Train Sim World 3">Train Sim World 3</option>
+          <option value="Train Sim World 2">Train Sim World 2</option>
+          <option value="Train Sim World">Train Sim World</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label for="file">File * (.zip, .rar, .7z, .pak - max 500MB)</label>
+        <input type="file" id="file" name="file" accept=".zip,.rar,.7z,.pak" required>
+        <div id="fileSizeError" class="error" style="display: none; margin-top: 10px;"></div>
+      </div>
+      
+      <div id="uploadProgress" style="display: none;">
+        <div class="progress-bar">
+          <div id="progressFill" class="progress-fill"></div>
+        </div>
+        <p id="progressText" style="text-align: center; margin-top: 8px; color: #b0b0b0; font-size: 14px;">Uploading...</p>
+      </div>
+      
+      <button type="submit" id="submitBtn">Upload File</button>
+    </form>
+  </div>
+</div>
+
+<script>
+const maxFileSize = 500 * 1024 * 1024;
+const fileInput = document.getElementById('file');
+const fileSizeError = document.getElementById('fileSizeError');
+const form = document.getElementById('versionForm');
+const submitBtn = document.getElementById('submitBtn');
+const uploadProgress = document.getElementById('uploadProgress');
+const progressFill = document.getElementById('progressFill');
+const progressText = document.getElementById('progressText');
+
+fileInput.addEventListener('change', function() {
+  if (this.files[0]) {
+    const fileSize = this.files[0].size;
+    if (fileSize > maxFileSize) {
+      fileSizeError.textContent = `File is too large (${(fileSize / 1024 / 1024).toFixed(2)} MB). Maximum size is 500 MB.`;
+      fileSizeError.style.display = 'block';
+      submitBtn.disabled = true;
+    } else {
+      fileSizeError.style.display = 'none';
+      submitBtn.disabled = false;
+    }
+  }
+});
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  
+  const formData = new FormData(form);
+  const xhr = new XMLHttpRequest();
+  
+  uploadProgress.style.display = 'block';
+  submitBtn.disabled = true;
+  submitBtn.textContent = 'Uploading...';
+  
+  xhr.upload.addEventListener('progress', function(e) {
+    if (e.lengthComputable) {
+      const percentComplete = (e.loaded / e.total) * 100;
+      progressFill.style.width = percentComplete + '%';
+      progressText.textContent = `Uploading: ${percentComplete.toFixed(0)}%`;
+    }
+  });
+  
+  xhr.addEventListener('load', function() {
+    if (xhr.status === 200) {
+      const response = JSON.parse(xhr.responseText);
+      if (response.redirect) {
+        window.location.href = response.redirect;
+      } else {
+        progressText.textContent = 'Upload complete!';
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    } else {
+      const response = JSON.parse(xhr.responseText);
+      fileSizeError.textContent = response.error || 'Upload failed';
+      fileSizeError.style.display = 'block';
+      uploadProgress.style.display = 'none';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Upload File';
+    }
+  });
+  
+  xhr.addEventListener('error', function() {
+    fileSizeError.textContent = 'Upload failed. Please try again.';
+    fileSizeError.style.display = 'block';
+    uploadProgress.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Upload File';
+  });
+  
+  xhr.addEventListener('abort', function() {
+    fileSizeError.textContent = 'Upload cancelled.';
+    fileSizeError.style.display = 'block';
+    uploadProgress.style.display = 'none';
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Upload File';
+  });
+  
+  xhr.open('POST', '/mods/<%= mod.slug %>/versions/upload', true);
+  xhr.send(formData);
+});
+</script>

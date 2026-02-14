@@ -19,6 +19,10 @@ header {
   border-bottom: 1px solid #2a2a2a;
 }
 
+a {
+  color: #ffffff;
+}
+
 .nav-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -36,11 +40,6 @@ header {
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.logo-icon {
-  font-size: 24px;
 }
 
 .nav-links {
@@ -63,8 +62,8 @@ header {
 }
 
 .upload-btn,
-.register-btn {
-  background: #4a90e2 !important;
+.steam-login-btn {
+  background: #171a21 !important;
   color: #fff !important;
   border-radius: 3px;
   padding: 6px 14px !important;
@@ -72,8 +71,8 @@ header {
 }
 
 .upload-btn:hover,
-.register-btn:hover {
-  background: #357abd !important;
+.steam-login-btn:hover {
+  background: #2a475e !important;
 }
 
 .user-name {
@@ -281,6 +280,9 @@ button:hover,
   padding: 15px;
   border: 1px solid #2a2a2a;
   transition: border-color 0.2s;
+  text-decoration: none;
+  color: inherit;
+  display: block;
 }
 
 .mod-card:hover {
@@ -291,15 +293,7 @@ button:hover,
   margin-bottom: 8px;
   font-size: 16px;
   font-weight: bold;
-}
-
-.mod-card h3 a {
   color: #fff;
-  text-decoration: none;
-}
-
-.mod-card h3 a:hover {
-  color: #4a90e2;
 }
 
 .mod-card p {
@@ -402,6 +396,367 @@ footer {
   text-align: center;
   color: #5a5a5a;
   font-size: 13px;
+}
+
+.mod-versions {
+  margin: 20px 0;
+  background: #0d0d0d;
+  padding: 15px;
+  border: 1px solid #2a2a2a;
+}
+
+.mod-versions h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.version-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.version-item:last-child {
+  border-bottom: none;
+}
+
+.version-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.game-version {
+  color: #7a7a7a;
+  font-size: 13px;
+}
+
+.version-meta {
+  color: #6a6a6a;
+  font-size: 12px;
+}
+
+.version-download-btn {
+  background: #4a90e2;
+  color: #fff;
+  padding: 6px 16px;
+  text-decoration: none;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+.version-download-btn:hover {
+  background: #357abd;
+}
+
+.mod-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.manage-btn,
+.report-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+
+.manage-btn {
+  background: #4a90e2;
+  color: #fff;
+  text-decoration: none;
+}
+
+.manage-btn:hover {
+  background: #357abd;
+}
+
+.report-btn {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #b0b0b0;
+}
+
+.report-btn:hover {
+  border-color: #4a4a4a;
+  color: #fff;
+}
+
+.report-form {
+  margin-top: 20px;
+  background: #0d0d0d;
+  padding: 20px;
+  border: 1px solid #2a2a2a;
+}
+
+.report-form h3 {
+  font-size: 16px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.cancel-btn {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #b0b0b0;
+  margin-left: 10px;
+}
+
+.cancel-btn:hover {
+  border-color: #4a4a4a;
+  color: #fff;
+}
+
+.versions-list {
+  margin-bottom: 30px;
+  background: #0d0d0d;
+  padding: 15px;
+  border: 1px solid #2a2a2a;
+}
+
+.versions-list h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.version-manage-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.version-manage-item:last-child {
+  border-bottom: none;
+}
+
+.delete-btn {
+  background: #8b2e2e;
+  color: #fff;
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}
+
+.delete-btn:hover {
+  background: #a33939;
+}
+
+.upload-version-form {
+  background: #0d0d0d;
+  padding: 20px;
+  border: 1px solid #2a2a2a;
+}
+
+.upload-version-form h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.edit-mod-form {
+  background: #0d0d0d;
+  padding: 20px;
+  border: 1px solid #2a2a2a;
+  margin-bottom: 30px;
+}
+
+.edit-mod-form h2 {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #fff;
+}
+
+.reports-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.reports-filter a {
+  padding: 6px 12px;
+  background: #0d0d0d;
+  text-decoration: none;
+  color: #b0b0b0;
+  font-size: 13px;
+  transition: all 0.2s;
+  border: 1px solid #2a2a2a;
+}
+
+.reports-filter a:hover {
+  background: #2a2a2a;
+  color: #fff;
+}
+
+.reports-filter a.active {
+  background: #4a90e2;
+  color: #fff;
+  border-color: #4a90e2;
+}
+
+.reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.report-item {
+  background: #0d0d0d;
+  padding: 15px;
+  border: 1px solid #2a2a2a;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.report-header a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.report-header a:hover {
+  color: #4a90e2;
+}
+
+.report-status {
+  padding: 3px 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  border-radius: 2px;
+}
+
+.status-pending {
+  background: #4a4a1a;
+  color: #e8e87a;
+}
+
+.status-resolved {
+  background: #1a4a1a;
+  color: #7ae87a;
+}
+
+.status-dismissed {
+  background: #3a3a3a;
+  color: #9a9a9a;
+}
+
+.report-reason {
+  color: #b0b0b0;
+  margin-bottom: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.report-meta {
+  color: #6a6a6a;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.report-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.resolve-btn,
+.dismiss-btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+}
+
+.resolve-btn {
+  background: #2a6a2a;
+  color: #fff;
+}
+
+.resolve-btn:hover {
+  background: #3a8a3a;
+}
+
+.dismiss-btn {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #b0b0b0;
+}
+
+.dismiss-btn:hover {
+  border-color: #4a4a4a;
+  color: #fff;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: #2a2a2a;
+  margin-top: 15px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #4a90e2;
+  transition: width 0.3s ease;
+  width: 0%;
+}
+
+.file-upload-item {
+  background: #0d0d0d;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #2a2a2a;
+  position: relative;
+}
+
+.add-file-btn {
+  background: transparent;
+  border: 1px solid #3a3a3a;
+  color: #b0b0b0;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-bottom: 15px;
+  width: auto;
+}
+
+.add-file-btn:hover {
+  border-color: #4a4a4a;
+  color: #fff;
+  background: transparent;
+}
+
+.remove-file-btn {
+  background: #8b2e2e;
+  color: #fff;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 10px;
+  width: auto;
+}
+
+.remove-file-btn:hover {
+  background: #a33939;
 }
 
 @media (max-width: 768px) {

@@ -29,11 +29,11 @@ export class ModService {
   }
 
   async createMod(userId: number, title: string, description: string, categoryId?: number, version?: string) {
-    const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    let slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     
-    const existing = await this.modRepository.findBySlug(slug);
+    let existing = await this.modRepository.findBySlug(slug);
     if (existing) {
-      throw new Error('Mod with this title already exists');
+      slug = `${slug}-${Date.now()}`;
     }
 
     const data: CreateModData = {

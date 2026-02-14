@@ -1,0 +1,39 @@
+<div class="container">
+  <h1>Admin - Reports</h1>
+  
+  <div class="reports-filter">
+    <a href="/admin/reports?status=all" class="<%= filter === 'all' ? 'active' : '' %>">All (<%= allCount %>)</a>
+    <a href="/admin/reports?status=pending" class="<%= filter === 'pending' ? 'active' : '' %>">Pending (<%= pendingCount %>)</a>
+    <a href="/admin/reports?status=resolved" class="<%= filter === 'resolved' ? 'active' : '' %>">Resolved</a>
+    <a href="/admin/reports?status=dismissed" class="<%= filter === 'dismissed' ? 'active' : '' %>">Dismissed</a>
+  </div>
+
+  <% if (reports.length === 0) { %>
+    <p style="color: #909090; text-align: center; padding: 40px 0;">No reports found.</p>
+  <% } else { %>
+    <div class="reports-list">
+      <% reports.forEach(report => { %>
+        <div class="report-item">
+          <div class="report-header">
+            <strong><a href="/mods/<%= report.modSlug %>"><%= report.modTitle %></a></strong>
+            <span class="report-status status-<%= report.status %>"><%= report.status %></span>
+          </div>
+          <p class="report-reason"><%= report.reason %></p>
+          <div class="report-meta">
+            <span>Reported by <%= report.reporterName %> on <%= new Date(report.createdAt).toLocaleDateString() %></span>
+          </div>
+          <% if (report.status === 'pending') { %>
+            <div class="report-actions">
+              <form action="/admin/reports/<%= report.id %>/resolve" method="POST" style="display: inline;">
+                <button type="submit" class="resolve-btn">Mark Resolved</button>
+              </form>
+              <form action="/admin/reports/<%= report.id %>/dismiss" method="POST" style="display: inline;">
+                <button type="submit" class="dismiss-btn">Dismiss</button>
+              </form>
+            </div>
+          <% } %>
+        </div>
+      <% }); %>
+    </div>
+  <% } %>
+</div>

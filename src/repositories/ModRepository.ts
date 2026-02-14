@@ -47,4 +47,48 @@ export class ModRepository {
       [id]
     );
   }
+
+  async updateFile(id: number, filePath: string, fileSize: number): Promise<void> {
+    await pool.query(
+      'UPDATE mods SET file_path = $1, file_size = $2, updated_at = NOW() WHERE id = $3',
+      [filePath, fileSize, id]
+    );
+  }
+
+  async update(id: number, data: { title?: string; slug?: string; description?: string | null; categoryId?: number | null; version?: string | null }): Promise<void> {
+    const updates: string[] = [];
+    const values: any[] = [];
+    let paramIndex = 1;
+
+    if (data.title !== undefined) {
+      updates.push(`title = $${paramIndex++}`);
+      values.push(data.title);
+    }
+    if (data.slug !== undefined) {
+      updates.push(`slug = $${paramIndex++}`);
+      values.push(data.slug);
+    }
+    if (data.description !== undefined) {
+      updates.push(`description = $${paramIndex++}`);
+      values.push(data.description);
+    }
+    if (data.categoryId !== undefined) {
+      updates.push(`category_id = $${paramIndex++}`);
+      values.push(data.categoryId);
+    }
+    if (data.version !== undefined) {
+      updates.push(`version = $${paramIndex++}`);
+      values.push(data.version);
+    }
+
+    if (updates.length === 0) return;
+
+    updates.push(`updated_at = NOW()`);
+    values.push(id);
+
+    await pool.query(
+      `UPDATE mods SET ${updates.join(', ')} WHERE id = $${paramIndex}`,
+      values
+    );
+  }
 }

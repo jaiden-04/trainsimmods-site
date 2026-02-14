@@ -1,14 +1,64 @@
-<div class="container">
+<div class="container mod-details">
   <h1><%= mod.title %></h1>
-  <div class="mod-details">
-    <p><%= mod.description || 'No description' %></p>
-    <div class="mod-info">
-      <p>Version: <%= mod.version || 'N/A' %></p>
-      <p>Downloads: <%= mod.downloadCount %></p>
-      <p>Uploaded: <%= new Date(mod.createdAt).toLocaleDateString() %></p>
-    </div>
-    <% if (mod.filePath) { %>
-      <a href="/mods/<%= mod.slug %>/download" class="download-button">Download</a>
+  <p><%= mod.description || 'No description provided.' %></p>
+  
+  <div class="mod-info">
+    <p><strong>Version:</strong> <%= mod.version || 'N/A' %></p>
+    <p><strong>Downloads:</strong> <%= totalDownloads %></p>
+    <p><strong>Uploaded:</strong> <%= new Date(mod.createdAt).toLocaleDateString() %></p>
+    <% if (mod.updatedAt && mod.updatedAt !== mod.createdAt) { %>
+      <p><strong>Updated:</strong> <%= new Date(mod.updatedAt).toLocaleDateString() %></p>
     <% } %>
   </div>
+
+  <div class="mod-versions">
+    <h2>Available Files</h2>
+    <% if (versions && versions.length > 0) { %>
+      <% versions.forEach(version => { %>
+        <div class="version-item">
+          <div class="version-info">
+            <strong><%= version.versionName %></strong>
+            <% if (version.gameVersion) { %>
+              <span class="game-version">for <%= version.gameVersion %></span>
+            <% } %>
+            <span class="version-meta"><%= (version.fileSize / 1024 / 1024).toFixed(2) %> MB • <%= version.downloadCount %> downloads</span>
+          </div>
+          <a href="/mods/<%= mod.id %>/versions/<%= version.id %>/download" class="version-download-btn">Download</a>
+        </div>
+      <% }); %>
+    <% } else if (mod.filePath) { %>
+      <div class="version-item">
+        <div class="version-info">
+          <strong><%= mod.version || '1.0.0' %></strong>
+          <span class="version-meta"><%= mod.fileSize ? (mod.fileSize / 1024 / 1024).toFixed(2) + ' MB • ' : '' %><%= totalDownloads %> downloads</span>
+        </div>
+        <a href="/mods/<%= mod.id %>/download" class="version-download-btn">Download</a>
+      </div>
+    <% } else { %>
+      <p style="color: #909090;">No files available for download.</p>
+    <% } %>
+  </div>
+
+  <div class="mod-actions">
+    <% if (user && user.id === mod.userId) { %>
+      <a href="/mods/<%= mod.slug %>/edit" class="manage-btn">Edit Mod</a>
+    <% } %>
+    <% if (user) { %>
+      <button onclick="document.getElementById('reportForm').style.display='block'" class="report-btn">Report</button>
+    <% } %>
+  </div>
+
+  <% if (user) { %>
+    <div id="reportForm" class="report-form" style="display: none;">
+      <h3>Report this mod</h3>
+      <form action="/mods/<%= mod.id %>/report" method="POST">
+        <div class="form-group">
+          <label for="reason">Reason</label>
+          <textarea id="reason" name="reason" rows="4" required placeholder="Describe why you're reporting this mod..."></textarea>
+        </div>
+        <button type="submit">Submit Report</button>
+        <button type="button" onclick="document.getElementById('reportForm').style.display='none'" class="cancel-btn">Cancel</button>
+      </form>
+    </div>
+  <% } %>
 </div>

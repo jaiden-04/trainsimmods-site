@@ -1,22 +1,25 @@
 <div class="container">
   <h1><%= category.name %></h1>
-  <p><%= category.description || '' %></p>
   <div class="categories-filter">
     <a href="/mods">All</a>
     <% categories.forEach(cat => { %>
-      <a href="/category/<%= cat.slug %>" <%= cat.id === category.id ? 'class="active"' : '' %>><%= cat.name %></a>
+      <a href="/category/<%= cat.slug %>" class="<%= cat.id === category.id ? 'active' : '' %>"><%= cat.name %></a>
     <% }); %>
   </div>
   <div class="mods-grid">
-    <% mods.forEach(mod => { %>
-      <div class="mod-card">
-        <h3><a href="/mods/<%= mod.slug %>"><%= mod.title %></a></h3>
-        <p><%= mod.description || 'No description' %></p>
-        <div class="mod-meta">
-          <span>Version: <%= mod.version || 'N/A' %></span>
-          <span>Downloads: <%= mod.downloadCount %></span>
-        </div>
-      </div>
-    <% }); %>
+    <% if (mods.length === 0) { %>
+      <p style="color: #909090; text-align: center; grid-column: 1 / -1; padding: 40px 0;">No mods found.</p>
+    <% } else { %>
+      <% mods.forEach(mod => { %>
+        <a href="/mods/<%= mod.id %>" class="mod-card">
+          <h3><%= mod.title %></h3>
+          <p><%= mod.description || 'No description' %></p>
+          <div class="mod-meta">
+            <span>Version: <%= mod.version || 'N/A' %></span>
+            <span>Downloads: <%= mod.totalDownloads %></span>
+          </div>
+        </a>
+      <% }); %>
+    <% } %>
   </div>
 </div>

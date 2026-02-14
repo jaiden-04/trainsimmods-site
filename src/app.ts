@@ -46,8 +46,6 @@ app.use(setLocals);
 
 app.use(routes);
 
-app.use(routes);
-
 app.use(errorHandler);
 
 export default app;
